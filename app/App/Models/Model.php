@@ -10,7 +10,6 @@ class Model
     protected $db_user;
     protected $db_pass;
     protected $db_name;
-
     protected $connection;
     protected $query;
     protected $table;
@@ -18,9 +17,9 @@ class Model
 
     protected $sql, $data = [], $params = null;
 
-    protected $orderBy = "";
+    protected $orderBy = "", $limit = "";
 
-    public function __construct()
+		public function __construct()
     {
         $this->db_host = $_ENV['DB_HOST'];
         $this->db_user = $_ENV['DB_USERNAME'];
@@ -64,6 +63,12 @@ class Model
         return $this;
     }
 
+    public function limit($limit)
+    {
+        $this->limit = " LIMIT {$limit}";
+        return $this;
+    }
+
     public function first()
     {
         if (empty($this->query)) {
@@ -88,6 +93,8 @@ class Model
             }
 
             $this->sql .= $this->orderBy;
+
+            $this->sql .= $this->limit;
 
             $this->query($this->sql, $this->data, $this->params);
         }
