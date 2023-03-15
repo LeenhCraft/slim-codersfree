@@ -19,7 +19,7 @@ class Model
 
     protected $orderBy = "", $limit = "";
 
-		public function __construct()
+    public function __construct()
     {
         $this->db_host = $_ENV['DB_HOST'];
         $this->db_user = $_ENV['DB_USERNAME'];
@@ -166,6 +166,23 @@ class Model
 
         // $this->query($sql, [$value]);
         return $this;
+    }
+
+    public function orWhere($column, $operator = "=", $value = null)
+    {
+        if ($value == null) {
+            $value = $operator;
+            $operator = "=";
+        }
+
+        if (empty($this->sql)) {
+            $this->sql = "SELECT SQL_CALC_FOUND_ROWS * FROM {$this->table} WHERE {$column} {$operator} ?";
+
+            $this->data[] = $value;
+        } else {
+            $this->sql .= " OR {$column} {$operator} ?";
+            $this->data[] = $value;
+        }
     }
 
     public function create($data)
